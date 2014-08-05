@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Line Chart</title>
+	<link rel="stylesheet" type="text/css" href="d3chart.css"/>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+	<script type="text/javascript" src="d3chart.js"></script>
+	<style>
+		div {
+			display: inline-block;
+			background-color: white;
+		}
+	</style>
+</head>
+
+<body>
+
+<div id="svg1"></div>
+
+<div id="svg2"></div>
+
+<div id="svg3"></div>
+
+<div class="control-group">
+		<button onclick="update()">Update</button>
+</div>
+
+<script type="text/javascript">
+var numberOfSeries = 2,
+	maxX = 11,
+	maxY = 10;
+
+var data = createData(numberOfSeries, maxX, maxY);
+
+var svg1 = new LineChart('#svg1', {
+	width: 400, 
+	height: 300, 
+	margin: {top: 10, left: 20, right: 20, bottom: 20},
+	xOrient: 'bottom',
+	yOrient: 'left',
+	xDomain: [0,10],
+	yDomain: [0,10],
+	data: data,
+	duration: 100,
+	ticks: [10,0],
+	tickSubdivide: 0,
+	tickFormat: '$'
+});
+
+var svg2 = new LineChart('#svg2', {
+	width: 400, 
+	height: 300,
+	data: data,
+	duration: 1000
+});
+
+var data3 = [
+	[
+		{ x: new Date(2014, 7, 5), y: 3 },
+		{ x: new Date(2014, 7, 6), y: 2 },
+		{ x: new Date(2014, 7, 7), y: 7 },
+		{ x: new Date(2014, 7, 8), y: 4 },
+		{ x: new Date(2014, 7, 9), y: 13 },
+		{ x: new Date(2014, 7, 10), y: 2 },
+		{ x: new Date(2014, 7, 11), y: 20 }
+	]
+];
+
+var svg3 = new TimeChart('#svg3', {
+	width: 400, 
+	height: 300, 
+	margin: {top: 20, left: 20, right: 20, bottom: 20},
+	data: data3,
+	interpolate: 'linear',
+	ticks: [d3.time.days, 1],
+	tickSize: 5,
+	tickFormat: d3.time.format('%m/%d'),
+	tickPadding: 0,
+	duration: 100
+});
+
+function update() {
+	var series;
+	var i, j;
+
+	updateData(data, maxX, maxY);
+
+	var size = data3.length;
+	var length = data3[0].length;
+
+	for (i = 0; i < size; ++i) {
+		for (j = 0; j < length; ++j) {
+			data3[i][j].y = randomData(20);
+		}
+	}
+
+	svg1.update(data);
+	svg2.update(data);
+	svg3.update(data3);
+}
+
+function randomData(max) {
+	return Math.random() * max;
+}
+
+function createData(numberOfSeries, maxX, maxY) {
+	var data = [];
+
+	for (var i = 0; i < numberOfSeries; ++i) {
+		data.push(
+			d3.range(maxX).map(function (i) {
+				return {x: i, y: randomData(maxY)};
+			})
+		);
+	}
+
+	return data;
+}
+
+function updateData(data, maxX, maxY) {
+	for (var i = 0; i < data.length; ++i) {
+		data[i].length = 0;
+		for (var j = 0; j < maxX; ++j)
+			data[i].push({x: j, y: randomData(maxY)});
+	}
+}
+
+</script>
+
+
+
+
+</body>
+
+</html>
